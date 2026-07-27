@@ -4,7 +4,8 @@ const state = {
   featuredPosts: [],
   categories: [],
   activeCategory: 'All',
-  searchQuery: ''
+  searchQuery: '',
+  hasLoaded: false
 };
 
 const seenIds = new Set();
@@ -36,12 +37,17 @@ function init() {
   }
 
   renderLoadingState();
-  fetchPostsOnce().then((posts) => {
-    state.posts = posts;
-    render();
-  }).catch((error) => {
-    renderErrorState(error.message);
-  });
+
+  fetchPostsOnce()
+    .then((posts) => {
+      state.posts = posts;
+      state.hasLoaded = true;
+      render();
+    })
+    .catch((error) => {
+      state.hasLoaded = true;
+      renderErrorState(error.message);
+    });
 }
 
 function fetchPostsOnce() {
@@ -55,17 +61,31 @@ function fetchPostsOnce() {
         throw new Error('Unable to load posts.');
       }
 
-      const payload = await response.json();
+      const rawContent = await response.text();
+
+      // Pages CMS may leave the file empty after deleting the final post.
+      if (!rawContent.trim()) {
+        seenIds.clear();
+        return [];
+      }
+
+      let payload;
+
+      try {
+        payload = JSON.parse(rawContent);
+      } catch (error) {
+        throw new Error('The post data format is invalid.');
+      }
+
       if (!Array.isArray(payload)) {
         throw new Error('The post data format is invalid.');
       }
 
       seenIds.clear();
-      const validPosts = payload
+
+      return payload
         .map((post, index) => validateRecord(post, index))
         .filter(Boolean);
-
-      return validPosts;
     });
 
   return postsPromise;
@@ -302,12 +322,21 @@ function createDisabledLink() {
 }
 
 function render() {
+  state.categories = collectCategories(state.posts);
+
+  // Reset a previously selected category if it no longer exists.
+  if (
+    state.activeCategory !== 'All' &&
+    !state.categories.includes(state.activeCategory)
+  ) {
+    state.activeCategory = 'All';
+  }
+
   const queryResults = searchPosts(state.posts, state.searchQuery);
   const categoryResults = filterPosts(queryResults, state.activeCategory);
   const sortedPosts = sortPosts(categoryResults);
 
   state.visiblePosts = sortedPosts;
-  state.categories = collectCategories(state.posts);
 
   renderCategoryFilters(state.categories, state.activeCategory);
   renderFeaturedPosts(sortedPosts);
@@ -337,13 +366,29 @@ function filterPosts(posts, category) {
 }
 
 function toggleStateViews(postCount) {
-  const showLoading = !state.posts.length && !state.visiblePosts.length;
-  elements.loading.hidden = !showLoading;
-  elements.error.hidden = true;
-  elements.empty.hidden = postCount > 0 || state.posts.length > 0;
-  elements.noResults.hidden = postCount > 0 || !state.searchQuery;
-}
+  if (!state.hasLoaded) {
+    elements.loading.hidden = false;
+    elements.error.hidden = true;
+    elements.empty.hidden = true;
+    elements.noResults.hidden = true;
+    return;
+  }
 
+  const hasPosts = state.posts.length > 0;
+  const hasVisiblePosts = postCount > 0;
+  const isFiltering =
+    Boolean(state.searchQuery) || state.activeCategory !== 'All';
+
+  elements.loading.hidden = true;
+  elements.error.hidden = true;
+
+  // Show when the CMS contains no posts.
+  elements.empty.hidden = hasPosts;
+
+  // Show only when posts exist but none match the current filter/search.
+  elements.noResults.hidden =
+    !hasPosts || hasVisiblePosts || !isFiltering;
+}
 function renderLoadingState() {
   if (elements.loading) {
     elements.loading.hidden = false;
