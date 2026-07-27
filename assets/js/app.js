@@ -81,9 +81,9 @@ function validateRecord(record, index) {
   const category = typeof record.category === 'string' ? record.category.trim() : '';
   const rawUrl = typeof record.url === 'string' ? record.url.trim() : '';
   const rawDate = typeof record.date === 'string' ? record.date.trim() : '';
-  const featured = Boolean(record.featured);
+  const featured = record.featured === true;
 
-  if (!title || !description || !category) {
+  if (!rawUrl || !isValidLinkedInUrl(rawUrl)) {
     return null;
   }
 
@@ -101,7 +101,7 @@ function validateRecord(record, index) {
 
   return {
     id: uniqueId,
-    title,
+    title: title || 'LinkedIn Post',
     url: rawUrl,
     safeUrl: validUrl,
     date: rawDate,
@@ -247,10 +247,12 @@ function createPostCard(post) {
   const meta = document.createElement('div');
   meta.className = 'post-meta';
 
-  const category = document.createElement('span');
-  category.className = 'post-badge';
-  category.textContent = post.category;
-  meta.appendChild(category);
+  if (post.category) {
+    const category = document.createElement('span');
+    category.className = 'post-badge';
+    category.textContent = post.category;
+    meta.appendChild(category);
+  }
 
   const formattedDate = formatDate(post.date);
   if (formattedDate) {
@@ -267,10 +269,12 @@ function createPostCard(post) {
   title.textContent = post.title;
   article.appendChild(title);
 
-  const description = document.createElement('p');
-  description.className = 'post-description';
-  description.textContent = post.description;
-  article.appendChild(description);
+  if (post.description) {
+    const description = document.createElement('p');
+    description.className = 'post-description';
+    description.textContent = post.description;
+    article.appendChild(description);
+  }
 
   const link = post.hasValidUrl
     ? createLink(post.safeUrl)
