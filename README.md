@@ -10,7 +10,7 @@ This project is a lightweight static website for Atif Rashid that displays curat
 - _headers — Cloudflare Pages security headers
 - robots.txt — basic robots instructions
 - sitemap.xml — sitemap for the site
-- favicon.svg — favicon
+- favicon.png — favicon
 - assets/css/style.css — site styles
 - assets/js/app.js — post fetching, rendering, search, filtering, and states
 - data/posts.json — post data source
