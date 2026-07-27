@@ -18,7 +18,7 @@ content:
       - name: title
         label: Post Title
         type: string
-        required: true
+        required: false
         options:
           minlength: 3
           maxlength: 160
@@ -37,12 +37,12 @@ content:
         type: date
         default: ""
         options:
-          format: yyyy-MM-dd
+          format: dd-MM-yyyy
 
       - name: description
         label: Description
         type: text
-        required: true
+        required: false
         options:
           minlength: 10
           maxlength: 500
@@ -50,7 +50,7 @@ content:
       - name: category
         label: Category
         type: string
-        required: true
+        required: false
         options:
           minlength: 2
           maxlength: 80
