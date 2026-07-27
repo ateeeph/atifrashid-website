@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Atif Rashid | LinkedIn Posts</title>
+    <meta name="description" content="A curated collection of thoughts, lessons, and perspectives shared on LinkedIn by Atif Rashid.">
+    <link rel="canonical" href="https://atifrashid.com/">
+    <meta property="og:title" content="Atif Rashid | LinkedIn Posts">
+    <meta property="og:description" content="A curated collection of thoughts, lessons, and perspectives shared on LinkedIn by Atif Rashid.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://atifrashid.com/">
+    <meta name="theme-color" content="#000000">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="assets/css/style.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <div class="page-shell">
+      <header class="site-header">
+        <div class="brand-block">
+          <p class="eyebrow">ATIF RASHID</p>
+          <h1>A curated collection of thoughts, lessons, and perspectives shared on LinkedIn.</h1>
+          <p class="intro">A minimal archive of ideas worth revisiting.</p>
+        </div>
+        <a class="button-link" href="https://www.linkedin.com/in/atif-rashid-21005814" target="_blank" rel="noopener noreferrer">View LinkedIn</a>
+      </header>
+
+      <main id="main-content">
+        <section class="toolbar" aria-label="Search and filter posts">
+          <div class="search-group">
+            <label class="sr-only" for="search-input">Search posts</label>
+            <input id="search-input" type="search" placeholder="Search posts" autocomplete="off">
+          </div>
+          <div id="category-filters" class="filter-list" role="toolbar" aria-label="Category filters"></div>
+        </section>
+
+        <section id="featured-section" class="content-section" aria-labelledby="featured-heading" hidden>
+          <div class="section-heading">
+            <h2 id="featured-heading">Featured posts</h2>
+          </div>
+          <div id="featured-posts" class="post-list"></div>
+        </section>
+
+        <section class="content-section" aria-labelledby="posts-heading">
+          <div class="section-heading">
+            <h2 id="posts-heading">All posts</h2>
+          </div>
+          <div id="loading-state" class="state-card" role="status">Loading posts…</div>
+          <div id="error-state" class="state-card" hidden role="alert"></div>
+          <div id="empty-state" class="state-card" hidden role="status">No posts are available yet.</div>
+          <div id="no-search-results" class="state-card" hidden role="status">No posts match your current search.</div>
+          <div id="post-list" class="post-list" aria-live="polite"></div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <p>© <span id="year"></span> Atif Rashid</p>
+        <a href="https://www.linkedin.com/in/atif-rashid-21005814" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+      </footer>
+    </div>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Atif Rashid",
+        "url": "https://atifrashid.com/",
+        "sameAs": [
+          "https://www.linkedin.com/in/atif-rashid-21005814"
+        ]
+      }
+    </script>
+    <script src="assets/js/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,39 @@
+media: false
+content:
+  - name: posts
+    label: Posts
+    type: file
+    path: data/posts.json
+    fields:
+      - name: posts
+        label: Posts
+        type: object
+        list: true
+        list:
+          summary: "{title}"
+        fields:
+          - name: id
+            label: ID
+            type: string
+          - name: title
+            label: Title
+            type: string
+            required: true
+          - name: url
+            label: LinkedIn URL
+            type: string
+            required: true
+          - name: date
+            label: Publishing date
+            type: string
+          - name: description
+            label: Description
+            type: text
+            required: true
+          - name: category
+            label: Category
+            type: string
+            required: true
+          - name: featured
+            label: Featured
+            type: boolean
