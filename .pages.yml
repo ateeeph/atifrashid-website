@@ -1,39 +1,77 @@
-media: false
 content:
-  - name: posts
-    label: Posts
+  - name: linkedin_posts
+    label: LinkedIn Posts
     type: file
     path: data/posts.json
+    format: json
+    list: true
+
     fields:
-      - name: posts
-        label: Posts
-        type: object
-        list: true
-        list:
-          summary: "{title}"
-        fields:
-          - name: id
-            label: ID
-            type: string
-          - name: title
-            label: Title
-            type: string
-            required: true
-          - name: url
-            label: LinkedIn URL
-            type: string
-            required: true
-          - name: date
-            label: Publishing date
-            type: string
-          - name: description
-            label: Description
-            type: text
-            required: true
-          - name: category
-            label: Category
-            type: string
-            required: true
-          - name: featured
-            label: Featured
-            type: boolean
+      - name: id
+        label: Post ID
+        type: string
+        required: true
+        description: Use lowercase letters, numbers, and hyphens only.
+        pattern:
+          regex: '^[a-z0-9]+(?:-[a-z0-9]+)*$'
+          message: Use lowercase letters, numbers, and hyphens only.
+        options:
+          minlength: 3
+          maxlength: 150
+
+      - name: title
+        label: Post Title
+        type: string
+        required: true
+        options:
+          minlength: 3
+          maxlength: 160
+
+      - name: url
+        label: LinkedIn Post URL
+        type: string
+        required: true
+        description: Paste the complete HTTPS LinkedIn post URL.
+        pattern:
+          regex: '^https://(www\.)?linkedin\.com/.+$'
+          message: Enter a valid HTTPS LinkedIn URL.
+
+      - name: date
+        label: Publishing Date
+        type: date
+        default: ""
+        options:
+          format: yyyy-MM-dd
+
+      - name: description
+        label: Description
+        type: text
+        required: true
+        options:
+          minlength: 10
+          maxlength: 500
+
+      - name: category
+        label: Category
+        type: string
+        required: true
+        options:
+          minlength: 2
+          maxlength: 80
+
+      - name: featured
+        label: Featured Post
+        type: boolean
+        default: false
+
+    operations:
+      create: true
+      delete: true
+
+settings:
+  hide: true
+  commit:
+    templates:
+      create: "Add LinkedIn post"
+      update: "Update LinkedIn posts"
+      delete: "Delete LinkedIn post"
