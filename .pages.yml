@@ -8,16 +8,12 @@ content:
 
     fields:
       - name: id
-        label: Post ID
-        type: string
+        type: uuid
         required: true
-        description: Use lowercase letters, numbers, and hyphens only.
-        pattern:
-          regex: '^[a-z0-9]+(?:-[a-z0-9]+)*$'
-          message: Use lowercase letters, numbers, and hyphens only.
+        hidden: true
         options:
-          minlength: 3
-          maxlength: 150
+          editable: false
+          generate: false
 
       - name: title
         label: Post Title
