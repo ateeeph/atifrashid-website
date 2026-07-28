@@ -98,7 +98,21 @@ function validateRecord(record, index) {
 
   const title = typeof record.title === 'string' ? record.title.trim() : '';
   const description = typeof record.description === 'string' ? record.description.trim() : '';
-  const category = typeof record.category === 'string' ? record.category.trim() : '';
+  const legacyCategory =
+    typeof record.category === 'string'
+      ? record.category.trim()
+      : '';
+
+  const categories = Array.isArray(record.categories)
+    ? record.categories
+        .filter((category) => typeof category === 'string')
+        .map((category) => category.trim())
+        .filter(Boolean)
+    : legacyCategory
+      ? [legacyCategory]
+      : [];
+
+  const uniqueCategories = Array.from(new Set(categories));
   const rawUrl = typeof record.url === 'string' ? record.url.trim() : '';
   const rawDate = typeof record.date === 'string' ? record.date.trim() : '';
   const featured = record.featured === true;
@@ -127,7 +141,7 @@ function validateRecord(record, index) {
     date: rawDate,
     parsedDate,
     description,
-    category,
+    categories: uniqueCategories,
     featured,
     hasValidUrl: Boolean(validUrl)
   };
@@ -194,8 +208,13 @@ function formatDate(value) {
 }
 
 function collectCategories(posts) {
-  const categories = posts.map((post) => post.category.trim()).filter(Boolean);
-  return Array.from(new Set(categories)).sort((a, b) => a.localeCompare(b));
+  const categories = posts
+    .flatMap((post) => post.categories || [])
+    .map((category) => category.trim())
+    .filter(Boolean);
+
+  return Array.from(new Set(categories))
+    .sort((a, b) => a.localeCompare(b));
 }
 
 function renderCategoryFilters(categories, activeCategory) {
@@ -267,12 +286,12 @@ function createPostCard(post) {
   const meta = document.createElement('div');
   meta.className = 'post-meta';
 
-  if (post.category) {
+  post.categories.forEach((categoryName) => {
     const category = document.createElement('span');
     category.className = 'post-badge';
-    category.textContent = post.category;
+    category.textContent = categoryName;
     meta.appendChild(category);
-  }
+  });
 
   const formattedDate = formatDate(post.date);
   if (formattedDate) {
@@ -352,7 +371,11 @@ function searchPosts(posts, query) {
   }
 
   return posts.filter((post) => {
-    const haystack = `${post.title} ${post.description} ${post.category}`.toLowerCase();
+    const haystack = [
+      post.title,
+      post.description,
+      ...post.categories
+    ].join(' ').toLowerCase();
     return haystack.includes(trimmedQuery);
   });
 }
@@ -362,7 +385,9 @@ function filterPosts(posts, category) {
     return posts;
   }
 
-  return posts.filter((post) => post.category === category);
+  return posts.filter((post) =>
+    post.categories.includes(category)
+  );
 }
 
 function toggleStateViews(postCount) {

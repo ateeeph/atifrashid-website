@@ -48,11 +48,11 @@ content:
         options:
           maxlength: 500
 
-      - name: category
-        label: Category
+        - name: categories
+        label: Categories
         type: string
-        description: Optional category, such as Business or Leadership.
-        default: ""
+        list: true
+        description: Add one or more categories, such as Business, Leadership, or Technology.
         options:
           maxlength: 80
 
