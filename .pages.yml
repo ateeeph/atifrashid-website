@@ -69,6 +69,6 @@ settings:
   hide: true
   commit:
     templates:
-      create: "Add LinkedIn post"
-      update: "Update LinkedIn posts"
-      delete: "Delete LinkedIn post"
+      create: "Add"
+      update: "Update"
+      delete: "Delete"
