@@ -1,3 +1,7 @@
+media:
+  input: assets/images/posts
+  output: /assets/images/posts
+
 content:
   - name: linkedin_posts
     label: LinkedIn Posts
@@ -23,14 +27,16 @@ content:
         options:
           maxlength: 160
 
-      - name: url
-        label: LinkedIn Post URL
+      - name: slug
+        label: Slug
         type: string
-        required: true
-        description: Paste the complete HTTPS LinkedIn post URL.
+        description: URL-friendly identifier used for the post's own page, e.g. how-to-build-a-business. Suggested from the title (lowercase, hyphens instead of spaces) but you can edit it freely. Leave blank to auto-generate from the title.
+        default: ""
         pattern:
-          regex: '^https://(www\.)?linkedin\.com/.+$'
-          message: Enter a valid HTTPS LinkedIn URL.
+          regex: '^$|^[a-z0-9]+(-[a-z0-9]+)*$'
+          message: Use lowercase letters, numbers and hyphens only (e.g. how-to-build-a-business).
+        options:
+          maxlength: 96
 
       - name: date
         label: Publishing Date
@@ -41,20 +47,63 @@ content:
           format: dd-MM-yyyy
 
       - name: description
-        label: Description
+        label: Short Description
         type: text
-        description: Optional short description.
+        description: Short summary shown on the posts list and used for link previews.
         default: ""
         options:
           maxlength: 500
 
-        - name: categories
+      - name: content
+        label: Full Content
+        type: rich-text
+        description: Optional. The full formatted content shown on the post's own page. Leave blank to only show the short description.
+        default: ""
+        options:
+          format: html
+          media: false
+          switcher: true
+
+      - name: image
+        label: Featured Image
+        type: image
+        description: Optional cover image shown on the posts list and at the top of the post's page.
+        options:
+          path: assets/images/posts
+
+      - name: categories
         label: Categories
         type: string
         list: true
         description: Add one or more categories, such as Business, Leadership, or Technology.
         options:
           maxlength: 80
+
+      - name: url
+        label: Original LinkedIn Post URL
+        type: string
+        description: Optional. Paste the complete HTTPS LinkedIn post URL this content was originally shared from.
+        default: ""
+        pattern:
+          regex: '^$|^https://(www\.)?linkedin\.com/.+$'
+          message: Enter a valid HTTPS LinkedIn URL, or leave blank.
+
+      - name: linkedin_share_url
+        label: LinkedIn Share Post URL
+        type: string
+        description: Optional. After using "Share on LinkedIn" from the published post, paste the resulting LinkedIn post URL here to keep a record of it.
+        default: ""
+        pattern:
+          regex: '^$|^https://(www\.)?linkedin\.com/.+$'
+          message: Enter a valid HTTPS LinkedIn URL, or leave blank.
+
+      - name: status
+        label: Status
+        type: select
+        description: Only published posts appear on the website and have a working post page.
+        default: draft
+        options:
+          values: [draft, published]
 
       - name: featured
         label: Featured Post

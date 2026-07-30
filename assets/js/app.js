@@ -83,15 +83,56 @@ function fetchPostsOnce() {
 
       seenIds.clear();
 
+      // Slugs are computed from the raw, unfiltered array so a post's URL stays
+      // stable regardless of publish status, sort order, or search/filter state.
+      const slugs = computeSlugs(payload);
+
       return payload
-        .map((post, index) => validateRecord(post, index))
-        .filter(Boolean);
+        .map((post, index) => validateRecord(post, index, slugs[index]))
+        .filter(Boolean)
+        .filter((post) => post.published);
     });
 
   return postsPromise;
 }
 
-function validateRecord(record, index) {
+function slugify(input) {
+  return (
+    String(input || '')
+      .toLowerCase()
+      .trim()
+      .replace(/['"]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 96) || 'post'
+  );
+}
+
+function computeSlugs(rawPosts) {
+  const seenSlugs = new Set();
+
+  return rawPosts.map((record, index) => {
+    if (!record || typeof record !== 'object') {
+      return '';
+    }
+
+    const explicitSlug = typeof record.slug === 'string' ? record.slug.trim() : '';
+    const base = slugify(explicitSlug || record.title || record.id || `post-${index + 1}`);
+
+    let uniqueSlug = base;
+    let suffix = 2;
+
+    while (seenSlugs.has(uniqueSlug)) {
+      uniqueSlug = `${base}-${suffix}`;
+      suffix += 1;
+    }
+    seenSlugs.add(uniqueSlug);
+
+    return uniqueSlug;
+  });
+}
+
+function validateRecord(record, index, slug) {
   if (!record || typeof record !== 'object') {
     return null;
   }
@@ -113,15 +154,11 @@ function validateRecord(record, index) {
       : [];
 
   const uniqueCategories = Array.from(new Set(categories));
-  const rawUrl = typeof record.url === 'string' ? record.url.trim() : '';
   const rawDate = typeof record.date === 'string' ? record.date.trim() : '';
   const featured = record.featured === true;
+  const image = typeof record.image === 'string' ? record.image.trim() : '';
+  const status = typeof record.status === 'string' ? record.status.trim().toLowerCase() : '';
 
-  if (!rawUrl || !isValidLinkedInUrl(rawUrl)) {
-    return null;
-  }
-
-  const validUrl = isValidLinkedInUrl(rawUrl) ? rawUrl : null;
   const parsedDate = parseDate(rawDate);
   const idBase = typeof record.id === 'string' && record.id.trim() ? record.id.trim() : `post-${index + 1}`;
   let uniqueId = idBase;
@@ -135,29 +172,17 @@ function validateRecord(record, index) {
 
   return {
     id: uniqueId,
+    slug,
     title: title || 'LinkedIn Post',
-    url: rawUrl,
-    safeUrl: validUrl,
     date: rawDate,
     parsedDate,
     description,
+    image,
     categories: uniqueCategories,
     featured,
-    hasValidUrl: Boolean(validUrl)
+    // Legacy posts created before the status field existed are treated as published.
+    published: status !== 'draft'
   };
-}
-
-function isValidLinkedInUrl(value) {
-  if (!value) {
-    return false;
-  }
-
-  try {
-    const parsed = new URL(value);
-    return parsed.protocol === 'https:' && (parsed.hostname === 'linkedin.com' || parsed.hostname === 'www.linkedin.com');
-  } catch (error) {
-    return false;
-  }
 }
 
 function parseDate(value) {
@@ -165,7 +190,21 @@ function parseDate(value) {
     return null;
   }
 
-  const parsed = new Date(value);
+  const trimmed = String(value).trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  const dmy = trimmed.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+  if (dmy) {
+    const day = Number(dmy[1]);
+    const month = Number(dmy[2]);
+    const year = Number(dmy[3]);
+    const date = new Date(Date.UTC(year, month - 1, day));
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  const parsed = new Date(trimmed);
   return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
 
@@ -203,7 +242,8 @@ function formatDate(value) {
   return parsed.toLocaleDateString('en', {
     year: 'numeric',
     month: 'short',
-    day: 'numeric'
+    day: 'numeric',
+    timeZone: 'UTC'
   });
 }
 
@@ -283,6 +323,21 @@ function createPostCard(post) {
   const article = document.createElement('article');
   article.className = 'post-card';
 
+  const link = document.createElement('a');
+  link.className = 'post-card-link';
+  link.href = `/posts/${encodeURIComponent(post.slug)}`;
+
+  if (post.image) {
+    const thumb = document.createElement('div');
+    thumb.className = 'post-thumb';
+    const img = document.createElement('img');
+    img.src = post.image;
+    img.alt = post.title;
+    img.loading = 'lazy';
+    thumb.appendChild(img);
+    link.appendChild(thumb);
+  }
+
   const meta = document.createElement('div');
   meta.className = 'post-meta';
 
@@ -302,42 +357,22 @@ function createPostCard(post) {
     meta.appendChild(date);
   }
 
-  article.appendChild(meta);
+  link.appendChild(meta);
 
   const title = document.createElement('h3');
   title.textContent = post.title;
-  article.appendChild(title);
+  link.appendChild(title);
 
   if (post.description) {
     const description = document.createElement('p');
     description.className = 'post-description';
     description.textContent = post.description;
-    article.appendChild(description);
+    link.appendChild(description);
   }
 
-  const link = post.hasValidUrl
-    ? createLink(post.safeUrl)
-    : createDisabledLink();
   article.appendChild(link);
 
   return article;
-}
-
-function createLink(href) {
-  const anchor = document.createElement('a');
-  anchor.className = 'post-link';
-  anchor.href = href;
-  anchor.target = '_blank';
-  anchor.rel = 'noopener noreferrer';
-  anchor.textContent = 'View on LinkedIn';
-  return anchor;
-}
-
-function createDisabledLink() {
-  const span = document.createElement('span');
-  span.className = 'post-link-disabled';
-  span.textContent = 'LinkedIn link unavailable';
-  return span;
 }
 
 function render() {
