@@ -41,8 +41,13 @@ The site reads posts from data/posts.json. Each record should include:
 - url
 - date
 - description
-- category
+- image (optional)
+- full_description (optional, rich text/HTML)
+- category or categories
 - featured
+
+Clicking a post title on the homepage opens post.html?id=<id>, a single static
+detail page that reads the matching record from data/posts.json client-side.
 
 ## How Pages CMS works
 Pages CMS is configured in .pages.yml and points to data/posts.json so authorized GitHub users can manage the posts array directly.

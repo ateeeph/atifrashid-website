@@ -200,16 +200,40 @@ h3 {
   border-color: var(--text);
 }
 
-.post-card-link {
-  display: block;
+.post-card-body {
   padding: 1.2rem;
+}
+
+.post-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.9rem;
+}
+
+.post-card-actions .button-link {
+  margin-top: 0;
+}
+
+.post-title-link {
   color: inherit;
   text-decoration: none;
 }
 
-.post-thumb {
-  margin: -1.2rem -1.2rem 0.9rem;
+.post-title-link:hover,
+.post-title-link:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  outline: none;
+}
+
+.post-thumb-link {
+  display: block;
   border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.post-thumb {
   overflow: hidden;
 }
 
@@ -243,64 +267,92 @@ h3 {
   margin-bottom: 1rem;
 }
 
-.post-hero {
+.post-detail-header {
+  margin-bottom: 1.25rem;
+}
+
+.post-detail-header .post-meta {
+  margin-bottom: 0.75rem;
+}
+
+.post-hero,
+.post-detail-image {
   border: 1px solid var(--border);
   margin: 0 0 1.25rem;
   overflow: hidden;
 }
 
-.post-hero img {
+.post-hero img,
+.post-detail-image img {
   display: block;
   width: 100%;
   height: auto;
 }
 
-.post-content p {
+.post-content,
+.post-detail-content {
+  max-width: 42rem;
+}
+
+.post-content p,
+.post-detail-content p {
   margin: 0 0 1rem;
 }
 
 .post-content h2,
 .post-content h3,
-.post-content h4 {
+.post-content h4,
+.post-detail-content h2,
+.post-detail-content h3,
+.post-detail-content h4 {
   margin: 1.5rem 0 0.75rem;
   font-weight: 500;
 }
 
 .post-content ul,
-.post-content ol {
+.post-content ol,
+.post-detail-content ul,
+.post-detail-content ol {
   margin: 0 0 1rem;
   padding-left: 1.4rem;
 }
 
-.post-content li {
+.post-content li,
+.post-detail-content li {
   margin-bottom: 0.4rem;
 }
 
-.post-content blockquote {
+.post-content blockquote,
+.post-detail-content blockquote {
   margin: 0 0 1rem;
   padding-left: 1rem;
   border-left: 2px solid var(--border);
   color: var(--muted);
 }
 
-.post-content a {
+.post-content a,
+.post-detail-content a {
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
 .post-content a:hover,
-.post-content a:focus-visible {
+.post-content a:focus-visible,
+.post-detail-content a:hover,
+.post-detail-content a:focus-visible {
   color: var(--muted);
 }
 
-.post-content code {
+.post-content code,
+.post-detail-content code {
   background: var(--hover);
   border: 1px solid var(--border);
   padding: 0.15rem 0.35rem;
   font-size: 0.9em;
 }
 
-.post-content pre {
+.post-content pre,
+.post-detail-content pre {
   background: var(--hover);
   border: 1px solid var(--border);
   padding: 1rem;
@@ -308,13 +360,15 @@ h3 {
   margin: 0 0 1rem;
 }
 
-.post-content pre code {
+.post-content pre code,
+.post-detail-content pre code {
   border: 0;
   padding: 0;
   background: none;
 }
 
-.post-content img {
+.post-content img,
+.post-detail-content img {
   max-width: 100%;
   height: auto;
 }
@@ -330,9 +384,18 @@ h3 {
   margin-top: 0;
 }
 
-.post-back-link {
+.post-back-link,
+.back-link {
   display: inline-flex;
   margin-top: 2rem;
+}
+
+.post-actions .back-link {
+  margin-top: 0;
+}
+
+.site-header .back-link {
+  margin-top: 0;
 }
 
 .state-card {

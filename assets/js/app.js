@@ -170,6 +170,11 @@ function validateRecord(record, index, slug) {
   }
   seenIds.add(uniqueId);
 
+  const rawUrl = typeof record.url === 'string' ? record.url.trim() : '';
+  const linkedinUrl = isValidLinkedInUrl(rawUrl) ? rawUrl : '';
+  const fullDescription =
+    typeof record.full_description === 'string' ? record.full_description.trim() : '';
+
   return {
     id: uniqueId,
     slug,
@@ -178,11 +183,33 @@ function validateRecord(record, index, slug) {
     parsedDate,
     description,
     image,
+    fullDescription,
+    linkedinUrl,
     categories: uniqueCategories,
     featured,
     // Legacy posts created before the status field existed are treated as published.
     published: status !== 'draft'
   };
+}
+
+function isValidLinkedInUrl(value) {
+  if (!value) {
+    return false;
+  }
+
+  try {
+    const parsed = new URL(value);
+    return (
+      parsed.protocol === 'https:' &&
+      (parsed.hostname === 'linkedin.com' || parsed.hostname === 'www.linkedin.com')
+    );
+  } catch (error) {
+    return false;
+  }
+}
+
+function stripHtml(html) {
+  return String(html || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
 function parseDate(value) {
@@ -323,11 +350,12 @@ function createPostCard(post) {
   const article = document.createElement('article');
   article.className = 'post-card';
 
-  const link = document.createElement('a');
-  link.className = 'post-card-link';
-  link.href = `/posts/${encodeURIComponent(post.slug)}`;
+  const detailHref = `post.html?id=${encodeURIComponent(post.id)}`;
 
   if (post.image) {
+    const thumbLink = document.createElement('a');
+    thumbLink.className = 'post-thumb-link';
+    thumbLink.href = detailHref;
     const thumb = document.createElement('div');
     thumb.className = 'post-thumb';
     const img = document.createElement('img');
@@ -335,8 +363,12 @@ function createPostCard(post) {
     img.alt = post.title;
     img.loading = 'lazy';
     thumb.appendChild(img);
-    link.appendChild(thumb);
+    thumbLink.appendChild(thumb);
+    article.appendChild(thumbLink);
   }
+
+  const body = document.createElement('div');
+  body.className = 'post-card-body';
 
   const meta = document.createElement('div');
   meta.className = 'post-meta';
@@ -357,20 +389,37 @@ function createPostCard(post) {
     meta.appendChild(date);
   }
 
-  link.appendChild(meta);
+  body.appendChild(meta);
 
   const title = document.createElement('h3');
-  title.textContent = post.title;
-  link.appendChild(title);
+  const titleLink = document.createElement('a');
+  titleLink.className = 'post-title-link';
+  titleLink.href = detailHref;
+  titleLink.textContent = post.title;
+  title.appendChild(titleLink);
+  body.appendChild(title);
 
   if (post.description) {
     const description = document.createElement('p');
     description.className = 'post-description';
     description.textContent = post.description;
-    link.appendChild(description);
+    body.appendChild(description);
   }
 
-  article.appendChild(link);
+  if (post.linkedinUrl) {
+    const actions = document.createElement('div');
+    actions.className = 'post-card-actions';
+    const linkedinLink = document.createElement('a');
+    linkedinLink.className = 'button-link';
+    linkedinLink.href = post.linkedinUrl;
+    linkedinLink.target = '_blank';
+    linkedinLink.rel = 'noopener noreferrer';
+    linkedinLink.textContent = 'View on LinkedIn';
+    actions.appendChild(linkedinLink);
+    body.appendChild(actions);
+  }
+
+  article.appendChild(body);
 
   return article;
 }
@@ -409,6 +458,7 @@ function searchPosts(posts, query) {
     const haystack = [
       post.title,
       post.description,
+      stripHtml(post.fullDescription),
       ...post.categories
     ].join(' ').toLowerCase();
     return haystack.includes(trimmedQuery);

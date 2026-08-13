@@ -27,16 +27,14 @@ content:
         options:
           maxlength: 160
 
-      - name: slug
-        label: Slug
+      - name: url
+        label: LinkedIn Post URL
         type: string
-        description: URL-friendly identifier used for the post's own page, e.g. how-to-build-a-business. Suggested from the title (lowercase, hyphens instead of spaces) but you can edit it freely. Leave blank to auto-generate from the title.
+        description: Optional. Paste the complete HTTPS LinkedIn post URL this content was originally shared from.
         default: ""
         pattern:
-          regex: '^$|^[a-z0-9]+(-[a-z0-9]+)*$'
-          message: Use lowercase letters, numbers and hyphens only (e.g. how-to-build-a-business).
-        options:
-          maxlength: 96
+          regex: '^$|^https://(www\.)?linkedin\.com/.+$'
+          message: Enter a valid HTTPS LinkedIn URL, or leave blank.
 
       - name: date
         label: Publishing Date
@@ -54,8 +52,15 @@ content:
         options:
           maxlength: 500
 
-      - name: content
-        label: Full Content
+      - name: image
+        label: Post Image
+        type: image
+        description: Optional cover image shown on the posts list and at the top of the post's page.
+        options:
+          path: assets/images/posts
+
+      - name: full_description
+        label: Full Description
         type: rich-text
         description: Optional. The full formatted content shown on the post's own page. Leave blank to only show the short description.
         default: ""
@@ -64,29 +69,29 @@ content:
           media: false
           switcher: true
 
-      - name: image
-        label: Featured Image
-        type: image
-        description: Optional cover image shown on the posts list and at the top of the post's page.
-        options:
-          path: assets/images/posts
-
       - name: categories
-        label: Categories
+        label: Category
         type: string
         list: true
         description: Add one or more categories, such as Business, Leadership, or Technology.
         options:
           maxlength: 80
 
-      - name: url
-        label: Original LinkedIn Post URL
+      - name: featured
+        label: Featured Post
+        type: boolean
+        default: false
+
+      - name: slug
+        label: Slug
         type: string
-        description: Optional. Paste the complete HTTPS LinkedIn post URL this content was originally shared from.
+        description: Optional URL-friendly identifier. No longer used for routing (posts open via post.html?id=...) but kept for reference. Leave blank to auto-generate from the title.
         default: ""
         pattern:
-          regex: '^$|^https://(www\.)?linkedin\.com/.+$'
-          message: Enter a valid HTTPS LinkedIn URL, or leave blank.
+          regex: '^$|^[a-z0-9]+(-[a-z0-9]+)*$'
+          message: Use lowercase letters, numbers and hyphens only (e.g. how-to-build-a-business).
+        options:
+          maxlength: 96
 
       - name: linkedin_share_url
         label: LinkedIn Share Post URL
@@ -100,15 +105,10 @@ content:
       - name: status
         label: Status
         type: select
-        description: Only published posts appear on the website and have a working post page.
+        description: Only published posts appear on the website.
         default: draft
         options:
           values: [draft, published]
-
-      - name: featured
-        label: Featured Post
-        type: boolean
-        default: false
 
     operations:
       create: true
