@@ -300,27 +300,44 @@ h3 {
   margin-bottom: 0.75rem;
 }
 
-.post-hero,
+/* =========================================================
+   FULL POST PAGE IMAGE
+   Always show the COMPLETE original image
+   Never crop it
+   ========================================================= */
+
 .post-detail-image {
   width: 100%;
-  max-width: 900px;
-  /* reduce overall displayed size */
-  margin: 0 auto 1.25rem;
-  border: 1px solid var(--border);
+  margin: 0 0 1.5rem;
+  border: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   overflow: visible;
+  height: auto;
+  max-height: none;
+  aspect-ratio: auto;
 }
 
-.post-hero img,
 .post-detail-image img {
   display: block;
-  width: 100%;
-  height: auto;
-  /* keep original aspect ratio */
-  max-height: none;
-  /* do not force crop */
-  object-fit: contain;
-  /* show full image */
-  object-position: center;
+
+  /*
+    Keep the image at its natural proportions.
+    It may become smaller, but it will NEVER be cropped.
+  */
+  width: auto;
+  max-width: 100%;
+
+  height: auto !important;
+  max-height: none !important;
+
+  aspect-ratio: auto !important;
+
+  object-fit: contain !important;
+  object-position: center !important;
 }
 
 .post-content,
