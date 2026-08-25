@@ -322,22 +322,12 @@ h3 {
 }
 
 .post-detail-image img {
-  display: block;
-
-  /*
-    Keep the image at its natural proportions.
-    It may become smaller, but it will NEVER be cropped.
-  */
-  width: auto;
+  width: 650px;
   max-width: 100%;
-
   height: auto !important;
   max-height: none !important;
-
-  aspect-ratio: auto !important;
-
   object-fit: contain !important;
-  object-position: center !important;
+  aspect-ratio: auto !important;
 }
 
 .post-content,
