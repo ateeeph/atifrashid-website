@@ -303,26 +303,23 @@ h3 {
 .post-hero,
 .post-detail-image {
   width: 100%;
+  max-width: 900px;
+  /* reduce overall displayed size */
+  margin: 0 auto 1.25rem;
   border: 1px solid var(--border);
-  margin: 0 0 1.25rem;
   overflow: visible;
 }
 
 .post-hero img,
 .post-detail-image img {
   display: block;
-
-  /* full available width */
   width: 100%;
-
-  /* preserve original aspect ratio */
   height: auto;
-
-  /* remove previous height limitation */
+  /* keep original aspect ratio */
   max-height: none;
-
-  /* show entire image */
+  /* do not force crop */
   object-fit: contain;
+  /* show full image */
   object-position: center;
 }
 
