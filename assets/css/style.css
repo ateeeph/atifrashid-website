@@ -235,7 +235,7 @@ h3 {
   display: block;
 
   /* Full card width minus 1.2rem space on left and right */
-  width: calc(100% - 2.4rem);
+  width: calc(10% - 2.4rem);
 
   /* Equal spacing from left/right/top */
   margin: 1.2rem 1.2rem 0;
