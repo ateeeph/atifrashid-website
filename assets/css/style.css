@@ -31,7 +31,6 @@ a {
   color: inherit;
 }
 
-
 .skip-link {
   position: absolute;
   left: -9999px;
@@ -227,18 +226,30 @@ h3 {
   outline: none;
 }
 
+/* =========================================================
+   HOMEPAGE POST IMAGE
+   Wide rectangle with equal spacing from card edges
+   ========================================================= */
+
 .post-thumb-link {
   display: block;
-  width: 420px;
-  max-width: calc(100% - 2.4rem);
+
+  /* Full card width minus 1.2rem space on left and right */
+  width: calc(100% - 2.4rem);
+
+  /* Equal spacing from left/right/top */
   margin: 1.2rem 1.2rem 0;
+
   overflow: hidden;
   border: 1px solid var(--border);
 }
 
 .post-thumb {
   width: 100%;
-  height: 220px;
+
+  /* Wide rectangular image */
+  aspect-ratio: 16 / 7;
+
   overflow: hidden;
 }
 
@@ -246,7 +257,10 @@ h3 {
   display: block;
   width: 100%;
   height: 100%;
+
+  /* Prevent distortion */
   object-fit: cover;
+  object-position: center;
 }
 
 .post-meta {
@@ -266,6 +280,10 @@ h3 {
 .post-description {
   margin-bottom: 0.95rem;
 }
+
+/* =========================================================
+   POST DETAIL PAGE
+   ========================================================= */
 
 .post-detail h1 {
   margin-bottom: 1rem;
@@ -292,6 +310,7 @@ h3 {
   width: 100%;
   max-height: 420px;
   object-fit: cover;
+  object-position: center;
 }
 
 .post-content,
@@ -439,6 +458,10 @@ h3 {
   border: 0;
 }
 
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
 @media (max-width: 640px) {
   .page-shell {
     padding: 1rem 0.9rem 2rem;
@@ -454,9 +477,25 @@ h3 {
     align-items: flex-start;
     gap: 0.4rem;
   }
+
+  /* Keep equal spacing around image on mobile */
+  .post-thumb-link {
+    width: calc(100% - 2rem);
+    margin: 1rem 1rem 0;
+  }
+
+  /* Slightly less wide ratio on small screens */
+  .post-thumb {
+    aspect-ratio: 16 / 8;
+  }
 }
 
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
