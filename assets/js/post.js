@@ -7,7 +7,7 @@ const elements = {
   imageWrap: document.getElementById('post-image-wrap'),
   image: document.getElementById('post-image'),
   content: document.getElementById('post-content'),
-  linkedinLink: document.getElementById('post-linkedin-link'),
+  error: document.getElementById('error-state'),
   year: document.getElementById('year')
 };
 
@@ -45,6 +45,7 @@ function init() {
     .then((posts) => {
       const record = posts.find((post) => post && typeof post === 'object' && post.id === postId);
 
+      // A genuinely absent or unpublished post is the only "not found" case.
       if (!record || !isPublished(record)) {
         showNotFound();
         return;
@@ -52,8 +53,10 @@ function init() {
 
       renderPost(record);
     })
-    .catch(() => {
-      showNotFound();
+    .catch((error) => {
+      // Network, parse and render failures are real errors, not missing posts.
+      console.error('Failed to load post:', error);
+      showError('This post could not be loaded right now. Please try again later.');
     });
 }
 
@@ -110,22 +113,6 @@ function formatDate(value) {
   });
 }
 
-function isValidLinkedInUrl(value) {
-  if (!value) {
-    return false;
-  }
-
-  try {
-    const parsed = new URL(value);
-    return (
-      parsed.protocol === 'https:' &&
-      (parsed.hostname === 'linkedin.com' || parsed.hostname === 'www.linkedin.com')
-    );
-  } catch (error) {
-    return false;
-  }
-}
-
 function escapeHtml(value) {
   return String(value || '')
     .replace(/&/g, '&amp;')
@@ -180,7 +167,6 @@ function renderPost(record) {
   const fullDescription =
     typeof record.full_description === 'string' ? record.full_description.trim() : '';
   const image = typeof record.image === 'string' ? record.image.trim() : '';
-  const rawUrl = typeof record.url === 'string' ? record.url.trim() : '';
   const categories = getCategories(record);
   const formattedDate = formatDate(record.date);
 
@@ -217,21 +203,35 @@ function renderPost(record) {
       ? textToHtml(description)
       : '<p>No additional content has been added for this post yet.</p>';
 
-  if (isValidLinkedInUrl(rawUrl)) {
-    elements.linkedinLink.href = rawUrl;
-    elements.linkedinLink.hidden = false;
-  } else {
-    elements.linkedinLink.hidden = true;
-  }
-
   elements.loading.hidden = true;
   elements.notFound.hidden = true;
+  if (elements.error) {
+    elements.error.hidden = true;
+  }
   elements.detail.hidden = false;
 }
 
 function showNotFound() {
   elements.loading.hidden = true;
   elements.detail.hidden = true;
+  if (elements.error) {
+    elements.error.hidden = true;
+  }
+  elements.notFound.hidden = false;
+}
+
+function showError(message) {
+  elements.loading.hidden = true;
+  elements.detail.hidden = true;
+  elements.notFound.hidden = true;
+
+  if (elements.error) {
+    elements.error.textContent = message;
+    elements.error.hidden = false;
+    return;
+  }
+
+  // Fall back to the not-found card if the page has no dedicated error slot.
   elements.notFound.hidden = false;
 }
 

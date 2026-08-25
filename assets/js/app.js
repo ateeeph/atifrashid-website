@@ -406,19 +406,6 @@ function createPostCard(post) {
     body.appendChild(description);
   }
 
-  if (post.linkedinUrl) {
-    const actions = document.createElement('div');
-    actions.className = 'post-card-actions';
-    const linkedinLink = document.createElement('a');
-    linkedinLink.className = 'button-link';
-    linkedinLink.href = post.linkedinUrl;
-    linkedinLink.target = '_blank';
-    linkedinLink.rel = 'noopener noreferrer';
-    linkedinLink.textContent = 'View on LinkedIn';
-    actions.appendChild(linkedinLink);
-    body.appendChild(actions);
-  }
-
   article.appendChild(body);
 
   return article;
