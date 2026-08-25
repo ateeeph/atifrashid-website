@@ -247,8 +247,8 @@ h3 {
 .post-thumb {
   width: 100%;
 
-  /* Wide rectangular image */
-  aspect-ratio: 16 / 7;
+  /* Same width, half the previous height */
+  aspect-ratio: 32 / 7;
 
   overflow: hidden;
 }
@@ -478,15 +478,13 @@ h3 {
     gap: 0.4rem;
   }
 
-  /* Keep equal spacing around image on mobile */
   .post-thumb-link {
     width: calc(100% - 2rem);
     margin: 1rem 1rem 0;
   }
 
-  /* Slightly less wide ratio on small screens */
   .post-thumb {
-    aspect-ratio: 16 / 8;
+    aspect-ratio: 4 / 1;
   }
 }
 
